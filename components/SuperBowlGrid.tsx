@@ -114,7 +114,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
             <span className="font-black text-green-600">How to Play:</span> Squares are <span className="font-bold">$1 each</span>. Buy them from <span className="font-bold">Cole Grundhauser</span>.<br />
             Winners are chosen from the quarter scores: take the <span className="font-bold">last digit</span> of each team's score at the end of each quarter. The person in that square wins.<br />
             Numbers on the top (Seahawks) and side (Patriots) are randomized before the start of the game.<br />
-            Payouts: 1st, 2nd, and 3rd quarter winners get <span className="font-bold">20%</span> each; 4th quarter gets <span className="font-bold">40%</span>.
+            Payouts: 1st, 2nd, and 3rd quarter winners get <span className="font-bold">20%</span> each; 4th quarter gets <span className="font-bold">40% testing</span>.
           </p>
         </div>
         {/* Grid Header */}
