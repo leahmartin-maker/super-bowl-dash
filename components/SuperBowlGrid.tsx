@@ -118,28 +118,28 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
           </p>
         </div>
         {/* Grid Header */}
-        <div className="mb-2 w-full max-w-[95vw] mx-auto">
+        <div className="mb-2 w-full max-w-full mx-auto">
           <span className="block text-center font-black text-lg text-blue-600 mb-1">{NFC}</span>
         </div>
-        <div className="w-full max-w-[95vw] overflow-hidden">
-          <div className="grid grid-cols-11 grid-rows-11 w-full">
+        <div className="w-full max-w-full overflow-hidden">
+          <div className="grid grid-cols-11 grid-rows-11 w-full max-w-full" style={{ width: '100%', height: 'auto' }}>
             {/* Top left empty cell */}
             <div className="col-span-1 row-span-1"></div>
             {/* Seahawks numbers */}
             {nfcNumbers.map((num, idx) => (
-              <div key={"nfc-"+idx} className="col-span-1 row-span-1 flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs" style={{ minWidth: '6vw', minHeight: '6vw' }}>
+              <div key={"nfc-"+idx} className="col-span-1 row-span-1 flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs" style={{ minWidth: 'min(40px, 8vw)', minHeight: 'min(40px, 8vw)' }}>
                 {num}
               </div>
             ))}
             {/* Grid rows */}
             {participants.map((row, rowIdx) => [
               // Patriots number
-              <div key={"afc-"+rowIdx} className="col-span-1 row-span-1 flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs" style={{ minWidth: '6vw', minHeight: '6vw' }}>
+              <div key={"afc-"+rowIdx} className="col-span-1 row-span-1 flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs" style={{ minWidth: 'min(40px, 8vw)', minHeight: 'min(40px, 8vw)' }}>
                 {afcNumbers[rowIdx]}
               </div>,
               // Squares
               ...row.map((name, colIdx) => (
-                <div key={"sq-"+rowIdx+"-"+colIdx} className={`col-span-1 row-span-1 border border-slate-300 flex items-center justify-center ${isAdmin ? 'cursor-pointer hover:bg-yellow-100' : ''} bg-white text-[10px]`} style={{ minWidth: '6vw', minHeight: '6vw' }}
+                <div key={"sq-"+rowIdx+"-"+colIdx} className={`col-span-1 row-span-1 border border-slate-300 flex items-center justify-center ${isAdmin ? 'cursor-pointer hover:bg-yellow-100' : ''} bg-white text-[10px]`} style={{ minWidth: 'min(40px, 8vw)', minHeight: 'min(40px, 8vw)' }}
                   onClick={isAdmin ? () => openCellModal(rowIdx, colIdx) : undefined}
                 >
                   {name || <span className="text-slate-300">+</span>}
