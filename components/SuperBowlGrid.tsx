@@ -88,22 +88,22 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
         {/* Cell Modal */}
         {selectedCell && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-            <div className="bg-white rounded-lg p-6 w-72 relative">
+            <div className="bg-white rounded-lg p-6 w-72 relative text-black">
               <button className="absolute top-2 right-2 text-xl text-slate-700 hover:text-red-600 font-bold" onClick={() => setSelectedCell(null)}>&times;</button>
               <h2 className="font-black text-lg mb-2">Edit Square</h2>
               <input
-                className="w-full border border-slate-300 rounded p-2 mb-2"
+                className="w-full border border-black rounded p-2 mb-2"
                 value={cellInput}
                 onChange={e => setCellInput(e.target.value)}
                 placeholder="Enter name"
               />
-              <button className="w-full bg-blue-600 text-white py-2 rounded font-bold" onClick={saveCell}>Save</button>
+              <button className="w-full bg-green-600 text-white py-2 rounded font-bold" onClick={saveCell}>Save</button>
             </div>
           </div>
         )}
         <div className="w-full flex flex-col items-center">
         <button
-          className="absolute top-2 right-2 text-2xl text-slate-700 hover:text-red-600 font-bold"
+          className="absolute top-2 right-2 text-2xl text-black hover:text-red-600 font-bold"
           onClick={onClose}
         >
           ×
@@ -189,7 +189,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
         {/* Add Multiple Modal */}
         {isAdmin && showAddMultiple && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-            <div className="bg-white rounded-lg p-6 w-80 relative">
+            <div className="bg-white rounded-lg p-6 w-80 relative text-black">
               <button className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold" onClick={() => setShowAddMultiple(false)}>&times;</button>
               <h2 className="font-black text-lg mb-2">Add Multiple Squares</h2>
               <input
