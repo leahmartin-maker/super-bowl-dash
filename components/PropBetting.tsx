@@ -21,6 +21,7 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
   const KICKOFF_MINUTE = 30; // 5:30pm
   const [voteStats, setVoteStats] = useState<Record<string, Record<string, number>>>({});
   const [players, setPlayers] = useState<{ userName: string; points: number }[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Listen for betsClosed from Supabase
   useEffect(() => {
     const checkTimeAndClosed = async () => {
@@ -326,8 +327,14 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
       {/* Save Button and Confirmation */}
       <div className="mt-4 flex flex-col items-center">
         <button
-          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-lg transition-all border-2 border-yellow-400"
-          onClick={() => {
+          disabled={isSubmitting || !userName || getTotalPicks() === 0}
+          className={`px-6 py-3 text-slate-900 font-black rounded-full shadow-lg text-lg transition-all border-2 ${
+            isSubmitting || !userName || getTotalPicks() === 0
+              ? 'bg-slate-500 border-slate-400 cursor-not-allowed'
+              : 'bg-yellow-500 hover:bg-yellow-400 border-yellow-400'
+          }`}
+          onClick={async () => {
+            setIsSubmitting(true);
             const dataToSave = {
               picks: userPicks,
               userName,
@@ -335,21 +342,51 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
               lastUpdated: new Date().toISOString(),
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-            Object.entries(userPicks).forEach(async ([propId, answer]) => {
-              await supabase.from('prop_bet_answers').upsert({ user_name: userName, prop_id: propId, answer });
-            });
-            setShowSaveConfirmation(true);
-            setTimeout(() => setShowSaveConfirmation(false), 2000);
+            
+            // Save all picks to Supabase
+            const savePromises = Object.entries(userPicks).map(([propId, answer]) =>
+              supabase.from('prop_bet_answers').upsert({ user_name: userName, prop_id: propId, answer })
+            );
+            
+            try {
+              await Promise.all(savePromises);
+              setShowSaveConfirmation(true);
+              setTimeout(() => {
+                setShowSaveConfirmation(false);
+                setIsSubmitting(false);
+              }, 4000);
+            } catch (error) {
+              console.error('Error saving picks:', error);
+              setIsSubmitting(false);
+              alert('Error saving picks. Please try again.');
+            }
           }}
         >
-          SAVE PICKS
+          {isSubmitting ? 'SUBMITTING...' : 'SUBMIT PICKS'}
         </button>
+        
         {showSaveConfirmation && (
-          <div className="mt-2 text-green-700 font-bold text-sm">Picks saved!</div>
+          <div className="mt-4 bg-green-600 border-2 border-green-400 rounded-lg p-4 shadow-xl animate-pulse">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <h3 className="text-white font-black text-xl">Success!</h3>
+            </div>
+            <p className="text-white font-bold text-base">
+              Your {getTotalPicks()} prop bet{getTotalPicks() !== 1 ? 's' : ''} {getTotalPicks() !== 1 ? 'have' : 'has'} been submitted!
+            </p>
+            <p className="text-green-100 text-sm mt-1">
+              Good luck, {userName}! 🏈
+            </p>
+          </div>
         )}
-        <p className="mt-2 text-slate-600 text-xs">
-          ✓ All picks automatically saved to your device and leaderboard
-        </p>
+        
+        {!showSaveConfirmation && (
+          <p className="mt-2 text-slate-600 text-xs">
+            ✓ All picks automatically saved to your device and leaderboard
+          </p>
+        )}
       </div>
     </div>
   );
