@@ -23,16 +23,16 @@ export default function PropBetAdmin({ onClose }: PropBetAdminProps) {
   const pickWinner = async (questionId: string, answer: string) => {
     await supabase
       .from('prop_bet_questions')
-      .update({ correct_answer: answer, closed: true })
+      .update({ correct_answer: answer })
       .eq('id', questionId);
-    setQuestions((prev) => prev.map(q => q.id === questionId ? { ...q, correct_answer: answer, closed: true } : q));
+    setQuestions((prev) => prev.map(q => q.id === questionId ? { ...q, correct_answer: answer } : q));
   };
 
   if (loading) return <div className="text-center p-8">Loading...</div>;
 
   return (
     <div className="bg-white rounded-lg shadow p-6 w-full max-w-lg mx-auto max-h-[80vh] overflow-y-auto relative">
-      <h2 className="text-lg font-black mb-4 text-green-700 sticky top-0 bg-white z-10">Admin: Pick Prop Bet Winners</h2>
+      <h2 className="text-lg font-black mb-4 text-green-700">Admin: Pick Prop Bet Winners</h2>
       <button className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold" onClick={onClose}>&times;</button>
       <ul className="space-y-4">
         {questions.map((q) => (
@@ -43,7 +43,6 @@ export default function PropBetAdmin({ onClose }: PropBetAdminProps) {
                 <button
                   key={opt.id}
                   className={`px-3 py-1 rounded font-bold border ${q.correct_answer === opt.id ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-800'}`}
-                  disabled={q.closed}
                   onClick={() => pickWinner(q.id, opt.id)}
                 >
                   {opt.label}
