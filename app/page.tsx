@@ -1,15 +1,15 @@
 
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LiveScore from '@/components/LiveScore';
 import PropBetting from '@/components/PropBetting';
 import PropBetAdmin from '@/components/PropBetAdmin';
 import GridButton from '@/components/GridButton';
-import { useEffect, useState as useStateReact } from 'react';
 
+export default function Page() {
   const [showBetting, setShowBetting] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-  const [isAdmin, setIsAdmin] = useStateReact(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
