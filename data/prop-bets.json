@@ -1,0 +1,337 @@
+{
+  "gameInfo": {
+    "title": "SUPER BOWL LX PROP SHEET",
+    "date": "February 8, 2026",
+    "venue": "Levi's Stadium, Santa Clara",
+    "teams": {
+      "afc": {
+        "name": "New England Patriots",
+        "abbreviation": "NE",
+        "conference": "AFC"
+      },
+      "nfc": {
+        "name": "Seattle Seahawks",
+        "abbreviation": "SEA",
+        "conference": "NFC"
+      }
+    },
+    "halftimePerformer": "Bad Bunny"
+  },
+  "scoring": {
+    "pointsPerCorrectPick": 1,
+    "tiebreaker": "Closest to total combined score wins"
+  },
+  "categories": [
+    {
+      "id": "pre-game-anthem",
+      "name": "PRE-GAME & NATIONAL ANTHEM",
+      "icon": "🎤",
+      "props": [
+        {
+          "id": "coin-toss-result",
+          "question": "Coin Toss Result",
+          "type": "single-choice",
+          "options": [
+            { "id": "heads", "label": "Heads" },
+            { "id": "tails", "label": "Tails" }
+          ]
+        },
+        {
+          "id": "coin-toss-decision",
+          "question": "Coin Toss Winner Decision",
+          "type": "single-choice",
+          "options": [
+            { "id": "receive", "label": "Receive" },
+            { "id": "defer", "label": "Defer/Kick" }
+          ]
+        },
+        {
+          "id": "anthem-length",
+          "question": "National Anthem Length",
+          "type": "single-choice",
+          "options": [
+            { "id": "under", "label": "Under 2:00" },
+            { "id": "over", "label": "Over 2:00" }
+          ]
+        },
+        {
+          "id": "anthem-flub",
+          "question": "Anthem Singer Forgets/Flubs Lyrics?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game-outcome",
+      "name": "GAME OUTCOME",
+      "icon": "🏆",
+      "props": [
+        {
+          "id": "super-bowl-winner",
+          "question": "Super Bowl Winner",
+          "type": "team-choice",
+          "options": [
+            { "id": "ne", "label": "New England Patriots" },
+            { "id": "sea", "label": "Seattle Seahawks" }
+          ]
+        },
+        {
+          "id": "winning-margin",
+          "question": "Winning Margin",
+          "type": "single-choice",
+          "options": [
+            { "id": "1-6", "label": "1-6" },
+            { "id": "7-12", "label": "7-12" },
+            { "id": "13-18", "label": "13-18" },
+            { "id": "19-plus", "label": "19+" }
+          ]
+        },
+        {
+          "id": "total-points",
+          "question": "Total Points Scored",
+          "type": "single-choice",
+          "options": [
+            { "id": "under-45", "label": "Under 45" },
+            { "id": "45-50", "label": "45-50" },
+            { "id": "51-56", "label": "51-56" },
+            { "id": "over-56", "label": "Over 56" }
+          ]
+        },
+        {
+          "id": "overtime",
+          "question": "Game Goes to Overtime?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        },
+        {
+          "id": "highest-scoring-quarter",
+          "question": "Highest Scoring Quarter",
+          "type": "single-choice",
+          "options": [
+            { "id": "1st", "label": "1st" },
+            { "id": "2nd", "label": "2nd" },
+            { "id": "3rd", "label": "3rd" },
+            { "id": "4th", "label": "4th" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mvp-scoring",
+      "name": "MVP & SCORING",
+      "icon": "⭐",
+      "props": [
+        {
+          "id": "super-bowl-mvp",
+          "question": "Super Bowl MVP",
+          "type": "player-input",
+          "placeholder": "Enter player name"
+        },
+        {
+          "id": "mvp-position",
+          "question": "MVP Position",
+          "type": "single-choice",
+          "options": [
+            { "id": "qb", "label": "QB" },
+            { "id": "rb", "label": "RB" },
+            { "id": "wr-te", "label": "WR/TE" },
+            { "id": "defense", "label": "Defense" }
+          ]
+        },
+        {
+          "id": "first-td-scorer",
+          "question": "First Touchdown Scorer",
+          "type": "player-input",
+          "placeholder": "Enter player name"
+        },
+        {
+          "id": "first-td-method",
+          "question": "First TD Method",
+          "type": "single-choice",
+          "options": [
+            { "id": "pass", "label": "Pass" },
+            { "id": "rush", "label": "Rush" },
+            { "id": "defensive-st", "label": "Defensive/ST" }
+          ]
+        },
+        {
+          "id": "defensive-st-td",
+          "question": "Any Defensive/Special Teams TD?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "halftime-show",
+      "name": "HALFTIME SHOW",
+      "icon": "🎸",
+      "props": [
+        {
+          "id": "first-song",
+          "question": "First Song Performed",
+          "type": "text-input",
+          "placeholder": "Enter song title"
+        },
+        {
+          "id": "number-of-songs",
+          "question": "Number of Songs Performed",
+          "type": "single-choice",
+          "options": [
+            { "id": "under-6", "label": "Under 6" },
+            { "id": "6-8", "label": "6-8" },
+            { "id": "over-8", "label": "Over 8" }
+          ]
+        },
+        {
+          "id": "surprise-guest",
+          "question": "Surprise Guest Appearance?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        },
+        {
+          "id": "wardrobe-change",
+          "question": "Wardrobe Change During Show?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "commercials-broadcast",
+      "name": "COMMERCIALS & BROADCAST",
+      "icon": "📺",
+      "props": [
+        {
+          "id": "first-commercial-category",
+          "question": "First Commercial Category",
+          "type": "single-choice",
+          "options": [
+            { "id": "beer", "label": "Beer" },
+            { "id": "auto", "label": "Auto" },
+            { "id": "tech", "label": "Tech" },
+            { "id": "food", "label": "Food" },
+            { "id": "other", "label": "Other" }
+          ]
+        },
+        {
+          "id": "celebrity-first-commercial",
+          "question": "Celebrity in First Commercial?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        },
+        {
+          "id": "movie-trailer",
+          "question": "Movie Trailer Shown Before Halftime?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        },
+        {
+          "id": "taylor-swift-mention",
+          "question": "Announcers Mention Taylor Swift?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "player-props",
+      "name": "PLAYER PROPS",
+      "icon": "🎯",
+      "props": [
+        {
+          "id": "most-passing-yards",
+          "question": "Most Passing Yards",
+          "type": "player-input",
+          "placeholder": "Enter player name"
+        },
+        {
+          "id": "most-rushing-yards",
+          "question": "Most Rushing Yards",
+          "type": "player-input",
+          "placeholder": "Enter player name"
+        },
+        {
+          "id": "most-receiving-yards",
+          "question": "Most Receiving Yards",
+          "type": "player-input",
+          "placeholder": "Enter player name"
+        },
+        {
+          "id": "player-3-plus-tds",
+          "question": "Any Player Scores 3+ TDs?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "celebration-misc",
+      "name": "CELEBRATION & MISC",
+      "icon": "🎉",
+      "props": [
+        {
+          "id": "gatorade-color",
+          "question": "Gatorade Shower Color",
+          "type": "single-choice",
+          "options": [
+            { "id": "orange", "label": "Orange" },
+            { "id": "blue", "label": "Blue" },
+            { "id": "yellow", "label": "Yellow" },
+            { "id": "clear", "label": "Clear" },
+            { "id": "other", "label": "Other" }
+          ]
+        },
+        {
+          "id": "mvp-first-thanked",
+          "question": "First Person Thanked in MVP Speech",
+          "type": "single-choice",
+          "options": [
+            { "id": "god", "label": "God" },
+            { "id": "teammates", "label": "Teammates" },
+            { "id": "family", "label": "Family" },
+            { "id": "coaches", "label": "Coaches" },
+            { "id": "city-fans", "label": "City/Fans" }
+          ]
+        },
+        {
+          "id": "disney-world",
+          "question": "\"I'm Going to Disney World\" Said?",
+          "type": "yes-no",
+          "options": [
+            { "id": "yes", "label": "Yes" },
+            { "id": "no", "label": "No" }
+          ]
+        }
+      ]
+    }
+  ]
+}
