@@ -15,9 +15,9 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
   const [tiebreakerScore, setTiebreakerScore] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [betsClosed, setBetsClosed] = useState(false);
-  // Set the kickoff time (local time, e.g., 5:00pm)
-  const KICKOFF_HOUR = 9; // 9am (TEMPORARY for testing)
-  const KICKOFF_MINUTE = 30; // 9:30am (TEMPORARY for testing)
+  // Set the kickoff time (local time, e.g., 5:30pm)
+  const KICKOFF_HOUR = 17; // 5pm
+  const KICKOFF_MINUTE = 30; // 5:30pm
   const [voteStats, setVoteStats] = useState<Record<string, Record<string, number>>>({});
   const [players, setPlayers] = useState<{ userName: string; points: number }[]>([]);
   // Listen for betsClosed from Supabase
