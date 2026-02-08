@@ -1,6 +1,6 @@
 
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LiveScore from '@/components/LiveScore';
 import PropBetting from '@/components/PropBetting';
 import PropBetAdmin from '@/components/PropBetAdmin';
@@ -11,6 +11,9 @@ export default function Home() {
   const [showGamePlan, setShowGamePlan] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showDrinkingGames, setShowDrinkingGames] = useState(false);
+  const [drinkingGamesPage, setDrinkingGamesPage] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -72,6 +75,105 @@ export default function Home() {
           >
             PHOTO BOOTH
           </a>
+
+          {/* Drinking Games Button */}
+          <button
+            className="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-xl transition-all border-2 border-yellow-400 text-center mt-4"
+            style={{ minWidth: 220 }}
+            onClick={() => setShowDrinkingGames(true)}
+          >
+            DRINKING GAMES
+          </button>
+                {/* Drinking Games Modal */}
+                {showDrinkingGames && (
+                  <div
+                    className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center"
+                    style={{ backgroundImage: 'url(/field.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                  >
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative text-black overflow-y-auto max-h-screen">
+                      <button
+                        className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold"
+                        onClick={() => setShowDrinkingGames(false)}
+                        aria-label="Close"
+                      >
+                        &#10005;
+                      </button>
+                      {/* Swipe navigation */}
+                        <div
+                          className="relative"
+                          onTouchStart={e => {
+                            touchStartXRef.current = e.touches[0].clientX;
+                          }}
+                          onTouchEnd={e => {
+                            const startX = touchStartXRef.current;
+                            const endX = e.changedTouches[0].clientX;
+                            if (startX !== null) {
+                              if (startX - endX > 50 && drinkingGamesPage === 0) setDrinkingGamesPage(1);
+                              if (endX - startX > 50 && drinkingGamesPage === 1) setDrinkingGamesPage(0);
+                            }
+                          }}
+                        >
+                          {drinkingGamesPage === 0 ? (
+                            <div>
+                              <h2 className="text-2xl font-black mb-4 text-center text-black">Super Bowl Drinking Game</h2>
+                              <div className="space-y-4 text-base">
+                                <div>
+                                  <span className="font-bold">Standard Gameplay Rules</span>
+                                  <p>These rules apply to the live action on the field.</p>
+                                </div>
+                                <div>
+                                  <span className="font-bold">Take a Sip when:</span>
+                                  <ul className="list-disc pl-6">
+                                    <li>A first down is gained.</li>
+                                    <li>A penalty flag is thrown by a referee.</li>
+                                    <li>A slow-motion replay is shown from a different angle.</li>
+                                    <li>A kicker makes a field goal or extra point.</li>
+                                  </ul>
+                                </div>
+                                <div>
+                                  <span className="font-bold">Take 2 Sips when:</span>
+                                  <ul className="list-disc pl-6">
+                                    <li>A team successfully converts a third down.</li>
+                                    <li>A player drops a wide-open pass.</li>
+                                    <li>The broadcast mentions a stat "that nobody cares about".</li>
+                                  </ul>
+                                </div>
+                                <div>
+                                  <span className="font-bold">Take a Shot when:</span>
+                                  <ul className="list-disc pl-6">
+                                    <li>There is a quarterback sack.</li>
+                                    <li>A touchdown is scored (or finish your drink).</li>
+                                    <li>A turnover occurs (interception or fumble).</li>
+                                    <li>A coach throws a challenge flag.</li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <h2 className="text-2xl font-black mb-4 text-center text-black">Super Bowl LX Drinking Game</h2>
+                              <img src="/drinkinggame.png" alt="Super Bowl LX Drinking Game" className="rounded-lg max-w-full h-auto" />
+                            </div>
+                          )}
+                          {/* Dots navigation with click support */}
+                          <div className="flex justify-center mt-6">
+                            <button
+                              className={`h-3 w-3 rounded-full mx-2 ${drinkingGamesPage === 0 ? 'bg-yellow-500' : 'bg-gray-300'}`}
+                              aria-label="Show drinking game text"
+                              onClick={() => setDrinkingGamesPage(0)}
+                              style={{ border: 'none', outline: 'none', cursor: 'pointer' }}
+                            />
+                            <button
+                              className={`h-3 w-3 rounded-full mx-2 ${drinkingGamesPage === 1 ? 'bg-yellow-500' : 'bg-gray-300'}`}
+                              aria-label="Show drinking game image"
+                              onClick={() => setDrinkingGamesPage(1)}
+                              style={{ border: 'none', outline: 'none', cursor: 'pointer' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                )}
         </div>
         {/* Game Plan Modal */}
         {showGamePlan && (
@@ -90,27 +192,27 @@ export default function Home() {
               <h2 className="text-2xl font-black mb-4 text-center text-black">The Game Plan</h2>
               <div className="space-y-6 text-base">
                 <div>
-                  <span className="font-bold">The Main Event (5:30pm)</span>
+                  <span className="font-bold">The Main Event</span>
                   <p>Watch the Super Bowl live! We'll be showing the game outside on the big projector for the ultimate viewing experience. </p>
                 </div>
                 <div>
-                  <span className="font-bold">Glow Party</span>
+                  <span className="font-bold">LET'S GLOW! Party</span>
                   <p>Get your glow on! We'll have glow sticks and fun glowing accessories to light up the night. Perfect for all ages—let's make the party shine!</p>
                 </div>
                 <div>
-                  <span className="font-bold">Face Painting</span>
+                  <span className="font-bold">Get Your Game Face On</span>
                   <p>Show your team spirit or just get creative! Leah will be offering a face painting station, open for everyone to get festive and colorful!</p>
                 </div>
                 <div>
-                  <span className="font-bold">Nacho Bar</span>
+                  <span className="font-bold">1st & 10 Toppings</span>
                   <p>Build your own nachos with all the fixings! Pile them high and enjoy a delicious snack throughout the game.</p>
                 </div>
                 <div>
-                  <span className="font-bold">Prop Betting & Squares</span>
+                  <span className="font-bold">End Zone Odds</span>
                   <p>Test your luck and football knowledge with our prop bets and 10x10 squares—place your bets right here on the site and see if you win big!</p>
                 </div>
                 <div>
-                  <span className="font-bold">Drinking Games</span>
+                  <span className="font-bold">Sideline Sips</span>
                   <p>Grab a beverage of choice and play along with our Super Bowl 2026 Drinking Game on the home page. </p>
                 </div>
               </div>
