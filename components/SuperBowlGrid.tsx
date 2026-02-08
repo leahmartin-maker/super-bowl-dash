@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 const ROWS = 10;
@@ -28,53 +28,14 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
   const [nfcNumbers, setNfcNumbers] = useState<number[]>(randomizeNumbers());
   const [editing, setEditing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false);
-
-  // Load grid data from Supabase on mount
-  useEffect(() => {
-    if (!open) return;
-    
-    const loadGridData = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('grid_data')
-        .select('*')
-        .single();
-      
-      if (data) {
-        setParticipants(data.participants || Array.from({ length: ROWS }, () => Array(COLS).fill("")));
-        setAfcNumbers(data.afc_numbers || randomizeNumbers());
-        setNfcNumbers(data.nfc_numbers || randomizeNumbers());
-      }
-      setIsLoading(false);
-    };
-    
-    loadGridData();
-
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('grid_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'grid_data' }, (payload) => {
-        if (payload.new && typeof payload.new === 'object' && 'participants' in payload.new) {
-          setParticipants(payload.new.participants || Array.from({ length: ROWS }, () => Array(COLS).fill("")));
-          if ('afc_numbers' in payload.new) setAfcNumbers(payload.new.afc_numbers || randomizeNumbers());
-          if ('nfc_numbers' in payload.new) setNfcNumbers(payload.new.nfc_numbers || randomizeNumbers());
-        }
-      })
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [open]);
 
   // Save grid data to Supabase
   const saveGridToDatabase = async () => {
     setIsSaving(true);
     
     const gridData = {
-      id: 1, // Single row for the grid
+      id: 1,
       participants,
       afc_numbers: afcNumbers,
       nfc_numbers: nfcNumbers,
@@ -150,17 +111,6 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
   };
 
   if (!open) return null;
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-        <div className="bg-white rounded-lg p-6">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="text-center mt-4 font-bold">Loading grid...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundImage: "url(/field.jpg)", backgroundSize: "cover", backgroundPosition: "center", fontFamily: 'Helvetica, Arial, sans-serif' }}>
