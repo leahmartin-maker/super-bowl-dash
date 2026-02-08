@@ -57,6 +57,12 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
     setIsSaving(false);
   };
 
+  const clearAllNames = () => {
+    if (confirm('Are you sure you want to clear ALL names from the grid? This cannot be undone.')) {
+      setParticipants(Array.from({ length: ROWS }, () => Array(COLS).fill("")));
+    }
+  };
+
   // Helper to get all empty cells
   const getEmptyCells = () => {
     const empty: { row: number; col: number }[] = [];
