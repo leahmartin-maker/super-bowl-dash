@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import LiveScore from '@/components/LiveScore';
 import PropBetting from '@/components/PropBetting';
+import PropBetAdmin from '@/components/PropBetAdmin';
 import GridButton from '@/components/GridButton';
 import { useEffect, useState as useStateReact } from 'react';
 
-export default function Home() {
   const [showBetting, setShowBetting] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useStateReact(false);
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -67,8 +68,24 @@ export default function Home() {
                   &#10005;
                 </button>
               </div>
-              <PropBetting />
+              <PropBetting isAdmin={isAdmin} />
             </div>
+          </div>
+        )}
+        {/* Admin Modal */}
+        {isAdmin && showAdmin && (
+          <div className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center bg-black bg-opacity-60">
+            <div className="relative w-full max-w-lg mx-auto">
+              <PropBetAdmin onClose={() => setShowAdmin(false)} />
+            </div>
+          </div>
+        )}
+        {/* Admin Button */}
+        {isAdmin && (
+          <div className="fixed bottom-4 right-4 z-50">
+            <button className="bg-green-600 text-white px-4 py-2 rounded font-bold shadow-lg" onClick={() => setShowAdmin(true)}>
+              Admin: Pick Winners
+            </button>
           </div>
         )}
 

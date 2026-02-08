@@ -3,15 +3,61 @@
 import { useState, useEffect } from 'react';
 import propBetsData from '@/data/prop-bets.json';
 import { PropBetsData, UserPick } from '@/types/prop-bets';
+import { supabase } from '@/lib/supabaseClient';
+import PropBetLeaderboard from './PropBetLeaderboard';
 
 const STORAGE_KEY = 'super-bowl-prop-bets';
 
-export default function PropBetting() {
+export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) {
   const data = propBetsData as PropBetsData;
   const [userPicks, setUserPicks] = useState<Record<string, string>>({});
   const [userName, setUserName] = useState('');
   const [tiebreakerScore, setTiebreakerScore] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const [betsClosed, setBetsClosed] = useState(false);
+  // Set the kickoff time (local time, e.g., 5:00pm)
+  const KICKOFF_HOUR = 17; // 5pm
+  const KICKOFF_MINUTE = 30; // 5:30pm
+  const [voteStats, setVoteStats] = useState<Record<string, Record<string, number>>>({});
+  const [players, setPlayers] = useState<{ userName: string; points: number }[]>([]);
+  // Listen for betsClosed from Supabase
+  useEffect(() => {
+    const checkTimeAndClosed = async () => {
+      // Check if current time is after 5:00pm local
+      const now = new Date();
+      const isAfterKickoff = now.getHours() > KICKOFF_HOUR || (now.getHours() === KICKOFF_HOUR && now.getMinutes() >= KICKOFF_MINUTE);
+      if (isAfterKickoff) {
+        setBetsClosed(true);
+        return;
+      }
+      // Also check Supabase closed flag
+      const { data: questions } = await supabase.from('prop_bet_questions').select('closed');
+      if (questions && questions.length > 0) {
+        setBetsClosed(questions.every((q: any) => q.closed));
+      }
+    };
+    checkTimeAndClosed();
+    const interval = setInterval(checkTimeAndClosed, 15000); // check every 15s
+    const channel = supabase.channel('prop_bet_questions').on('postgres_changes', { event: '*', schema: 'public', table: 'prop_bet_questions' }, checkTimeAndClosed).subscribe();
+    return () => { clearInterval(interval); channel.unsubscribe(); };
+  }, []);
+  // Fetch vote stats after bets close
+  useEffect(() => {
+    if (betsClosed) {
+      const fetchStats = async () => {
+        const { data: answers } = await supabase.from('prop_bet_answers').select('*');
+        const stats: Record<string, Record<string, number>> = {};
+        if (answers) {
+          for (const ans of answers) {
+            if (!stats[ans.prop_id]) stats[ans.prop_id] = {};
+            stats[ans.prop_id][ans.answer] = (stats[ans.prop_id][ans.answer] || 0) + 1;
+          }
+        }
+        setVoteStats(stats);
+      };
+      fetchStats();
+    }
+  }, [betsClosed]);
 
   // Load saved picks from localStorage
   useEffect(() => {
@@ -29,9 +75,9 @@ export default function PropBetting() {
     }
   }, []);
 
-  // Save picks to localStorage whenever they change
+  // Save picks to localStorage and Supabase whenever they change
   useEffect(() => {
-    if (isMounted) {
+    if (isMounted && userName) {
       const dataToSave = {
         picks: userPicks,
         userName,
@@ -39,6 +85,10 @@ export default function PropBetting() {
         lastUpdated: new Date().toISOString(),
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      // Save to Supabase
+      Object.entries(userPicks).forEach(async ([propId, answer]) => {
+        await supabase.from('prop_bet_answers').upsert({ user_name: userName, prop_id: propId, answer });
+      });
     }
   }, [userPicks, userName, tiebreakerScore, isMounted]);
 
@@ -77,6 +127,39 @@ export default function PropBetting() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+      </div>
+    );
+  }
+  if (betsClosed) {
+    return (
+      <div className="space-y-6">
+        <PropBetLeaderboard />
+        <div className="bg-white rounded-lg shadow p-4 w-full max-w-md mx-auto">
+          <h2 className="text-lg font-black mb-2 text-green-700">Prop Bet Voting Stats</h2>
+          {data.categories.map((category) => (
+            <div key={category.id} className="mb-4">
+              <div className="font-bold mb-1">{category.name}</div>
+              {category.props.map((prop) => (
+                <div key={prop.id} className="mb-2">
+                  <div className="font-semibold text-slate-700">{prop.question}</div>
+                  {prop.options && (
+                    <ul className="ml-2">
+                      {prop.options.map((opt) => {
+                        const total = Object.values(voteStats[prop.id] || {}).reduce((a, b) => a + b, 0);
+                        const percent = total ? Math.round(100 * (voteStats[prop.id]?.[opt.id] || 0) / total) : 0;
+                        return (
+                          <li key={opt.id} className="text-xs text-slate-600">
+                            {opt.label}: <span className="font-bold text-green-700">{percent}%</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -220,7 +303,7 @@ export default function PropBetting() {
       {/* Auto-save indicator */}
       <div className="mt-2 text-center">
         <p className="text-slate-600 text-xs">
-          ✓ All picks automatically saved to your device
+          ✓ All picks automatically saved to your device and leaderboard
         </p>
       </div>
     </div>
