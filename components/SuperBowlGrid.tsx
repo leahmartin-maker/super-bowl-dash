@@ -114,7 +114,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
             <span className="font-black text-green-600">How to Play:</span> Squares are <span className="font-bold">$1 each</span>. Buy them from <span className="font-bold">Cole Grundhauser</span>.<br />
             Winners are chosen from the quarter scores: take the <span className="font-bold">last digit</span> of each team's score at the end of each quarter. The person in that square wins.<br />
             Numbers on the top (Seahawks) and side (Patriots) are randomized before the start of the game.<br />
-            Payouts: 1st, 2nd, and 3rd quarter winners get <span className="font-bold">20%</span> each; 4th quarter gets <span className="font-bold">40% testing</span>.
+            Payouts: 1st, 2nd, and 3rd quarter winners get <span className="font-bold">20%</span> each; 4th quarter gets <span className="font-bold">40%</span>.
           </p>
         </div>
         {/* Grid Header */}
@@ -122,7 +122,24 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
           <span className="block text-center font-black text-lg text-blue-600 mb-1">{NFC}</span>
         </div>
         <div className="w-full max-w-full overflow-hidden">
-          <div className="flex flex-col w-full max-w-full" style={{ width: '100%', maxWidth: '95vw', overflow: 'hidden' }}>
+          <div className="flex flex-row w-full max-w-full items-stretch" style={{ width: '100%', maxWidth: '95vw', overflow: 'hidden' }}>
+            {/* Patriots label on the left, vertically centered, vertical text */}
+            <div className="flex flex-col justify-center items-center" style={{width: '32px', minWidth: '32px', height: '100%'}}>
+              <span
+                className="font-black text-md text-red-700 whitespace-nowrap"
+                style={{
+                  writingMode: 'vertical-rl',
+                  transform: 'rotate(180deg)',
+                  letterSpacing: '0.05em',
+                  textAlign: 'center',
+                  display: 'inline-block',
+                  marginTop: '120px',
+                }}
+              >
+                {AFC}
+              </span>
+            </div>
+            <div className="flex flex-col w-full">
             {/* Seahawks numbers row */}
             <div className="flex w-full">
               <div style={{ width: '10%' }}></div>
@@ -148,6 +165,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
                 ))}
               </div>
             ))}
+            </div>
           </div>
         </div>
         </div>
