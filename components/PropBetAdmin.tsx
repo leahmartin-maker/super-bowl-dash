@@ -31,8 +31,8 @@ export default function PropBetAdmin({ onClose }: PropBetAdminProps) {
   if (loading) return <div className="text-center p-8">Loading...</div>;
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 w-full max-w-lg mx-auto">
-      <h2 className="text-lg font-black mb-4 text-green-700">Admin: Pick Prop Bet Winners</h2>
+    <div className="bg-white rounded-lg shadow p-6 w-full max-w-lg mx-auto max-h-[80vh] overflow-y-auto relative">
+      <h2 className="text-lg font-black mb-4 text-green-700 sticky top-0 bg-white z-10">Admin: Pick Prop Bet Winners</h2>
       <button className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold" onClick={onClose}>&times;</button>
       <ul className="space-y-4">
         {questions.map((q) => (
