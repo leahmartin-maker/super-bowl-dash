@@ -32,7 +32,7 @@ export default function PropBetAdmin({ onClose }: PropBetAdminProps) {
 
   return (
     <div className="bg-white rounded-lg shadow p-6 w-full max-w-lg mx-auto max-h-[80vh] overflow-y-auto relative">
-      <h2 className="text-lg font-black mb-4 text-green-700">Admin: Pick Prop Bet Winners</h2>
+      <h2 className="text-lg font-black mb-4 text-yellow-500">Pick Prop Bet Winners</h2>
       <button className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold" onClick={onClose}>&times;</button>
       <ul className="space-y-4">
         {questions.map((q) => (
@@ -48,6 +48,30 @@ export default function PropBetAdmin({ onClose }: PropBetAdminProps) {
                   {opt.label}
                 </button>
               ))}
+              {/* For player-input or text-input type, show admin input */}
+              {(!q.options || q.type === 'player-input' || q.type === 'text-input') && (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const form = e.target as HTMLFormElement;
+                    const input = form.elements.namedItem('adminInput') as HTMLInputElement;
+                    if (input && input.value) {
+                      await pickWinner(q.id, input.value);
+                      input.value = '';
+                    }
+                  }}
+                  className="flex gap-2 mt-2"
+                >
+                  <input
+                    name="adminInput"
+                    type="text"
+                    defaultValue={q.correct_answer || ''}
+                    placeholder={q.placeholder || 'Enter answer'}
+                    className="px-2 py-1 border rounded text-sm"
+                  />
+                  <button type="submit" className="bg-green-600 text-white px-3 py-1 rounded font-bold">Set</button>
+                </form>
+              )}
             </div>
             {q.closed && <div className="text-green-700 font-bold mt-1">Closed</div>}
           </li>

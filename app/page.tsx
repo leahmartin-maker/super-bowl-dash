@@ -250,8 +250,8 @@ export default function Home() {
         {/* Admin Button */}
         {isAdmin && (
           <div className="fixed bottom-4 right-4 z-50">
-            <button className="bg-green-600 text-white px-4 py-2 rounded font-bold shadow-lg" onClick={() => setShowAdmin(true)}>
-              Admin: Pick Winners
+            <button className="bg-yellow-500 text-white px-4 py-2 rounded font-bold shadow-lg" onClick={() => setShowAdmin(true)}>
+              Pick Winners
             </button>
           </div>
         )}

@@ -16,8 +16,8 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
   const [isMounted, setIsMounted] = useState(false);
   const [betsClosed, setBetsClosed] = useState(false);
   // Set the kickoff time (local time, e.g., 5:00pm)
-  const KICKOFF_HOUR = 17; // 5pm
-  const KICKOFF_MINUTE = 30; // 5:30pm
+  const KICKOFF_HOUR = 9; // 9am (TEMPORARY for testing)
+  const KICKOFF_MINUTE = 30; // 9:30am (TEMPORARY for testing)
   const [voteStats, setVoteStats] = useState<Record<string, Record<string, number>>>({});
   const [players, setPlayers] = useState<{ userName: string; points: number }[]>([]);
   // Listen for betsClosed from Supabase
@@ -41,10 +41,11 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
     const channel = supabase.channel('prop_bet_questions').on('postgres_changes', { event: '*', schema: 'public', table: 'prop_bet_questions' }, checkTimeAndClosed).subscribe();
     return () => { clearInterval(interval); channel.unsubscribe(); };
   }, []);
-  // Fetch vote stats after bets close
+  // Fetch vote stats and correct answers after bets close
   useEffect(() => {
     if (betsClosed) {
-      const fetchStats = async () => {
+      const fetchStatsAndAnswers = async () => {
+        // Fetch answers for stats
         const { data: answers } = await supabase.from('prop_bet_answers').select('*');
         const stats: Record<string, Record<string, number>> = {};
         if (answers) {
@@ -54,8 +55,21 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
           }
         }
         setVoteStats(stats);
+        // Fetch correct answers from Supabase
+        const { data: questions } = await supabase.from('prop_bet_questions').select('id,correct_answer');
+        if (questions) {
+          // Merge correct_answer into local prop data
+          data.categories.forEach((cat) => {
+            cat.props.forEach((prop) => {
+              const found = questions.find((q: any) => q.id === prop.id);
+              if (found) {
+                prop.correct_answer = found.correct_answer;
+              }
+            });
+          });
+        }
       };
-      fetchStats();
+      fetchStatsAndAnswers();
     }
   }, [betsClosed]);
 
@@ -147,9 +161,17 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
                       {prop.options.map((opt) => {
                         const total = Object.values(voteStats[prop.id] || {}).reduce((a, b) => a + b, 0);
                         const percent = total ? Math.round(100 * (voteStats[prop.id]?.[opt.id] || 0) / total) : 0;
+                        const isCorrect = prop.correct_answer === opt.id;
                         return (
-                          <li key={opt.id} className="text-xs text-slate-600">
-                            {opt.label}: <span className="font-bold text-green-700">{percent}%</span>
+                          <li
+                            key={opt.id}
+                            className={`text-xs flex items-center gap-1 px-2 py-1 rounded ${isCorrect ? 'bg-green-100 font-bold text-green-800' : 'text-slate-600'}`}
+                          >
+                            {opt.label}
+                            <span className="font-bold text-green-700">{percent}%</span>
+                            {isCorrect && (
+                              <span className="ml-1 text-green-600" title="Correct Answer">✓</span>
+                            )}
                           </li>
                         );
                       })}

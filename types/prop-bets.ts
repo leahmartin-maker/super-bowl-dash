@@ -33,6 +33,7 @@ export interface Prop {
   type: 'single-choice' | 'yes-no' | 'team-choice' | 'player-input' | 'text-input';
   options?: PropOption[];
   placeholder?: string;
+  correct_answer?: string; // Added for UI/backend compatibility
 }
 
 export interface PropCategory {
