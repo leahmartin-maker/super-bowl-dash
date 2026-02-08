@@ -238,6 +238,12 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
               >
                 Add Multiple
               </button>
+              <button
+                className="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-700"
+                onClick={clearAllNames}
+              >
+                Clear All Names
+              </button>
             </div>
           </div>
         )}
