@@ -1,7 +1,8 @@
 "use client";
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 const ROWS = 10;
 const COLS = 10;
@@ -26,6 +27,74 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
   const [afcNumbers, setAfcNumbers] = useState<number[]>(randomizeNumbers());
   const [nfcNumbers, setNfcNumbers] = useState<number[]>(randomizeNumbers());
   const [editing, setEditing] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Load grid data from Supabase on mount
+  useEffect(() => {
+    if (!open) return;
+    
+    const loadGridData = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('grid_data')
+        .select('*')
+        .single();
+      
+      if (data) {
+        setParticipants(data.participants || Array.from({ length: ROWS }, () => Array(COLS).fill("")));
+        setAfcNumbers(data.afc_numbers || randomizeNumbers());
+        setNfcNumbers(data.nfc_numbers || randomizeNumbers());
+      }
+      setIsLoading(false);
+    };
+    
+    loadGridData();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('grid_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'grid_data' }, (payload) => {
+        if (payload.new && typeof payload.new === 'object' && 'participants' in payload.new) {
+          setParticipants(payload.new.participants || Array.from({ length: ROWS }, () => Array(COLS).fill("")));
+          if ('afc_numbers' in payload.new) setAfcNumbers(payload.new.afc_numbers || randomizeNumbers());
+          if ('nfc_numbers' in payload.new) setNfcNumbers(payload.new.nfc_numbers || randomizeNumbers());
+        }
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [open]);
+
+  // Save grid data to Supabase
+  const saveGridToDatabase = async () => {
+    setIsSaving(true);
+    
+    const gridData = {
+      id: 1, // Single row for the grid
+      participants,
+      afc_numbers: afcNumbers,
+      nfc_numbers: nfcNumbers,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('grid_data')
+      .upsert(gridData);
+
+    if (error) {
+      console.error('Error saving grid:', error);
+      alert('Error saving grid. Please try again.');
+    } else {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    }
+    
+    setIsSaving(false);
+  };
 
   // Helper to get all empty cells
   const getEmptyCells = () => {
@@ -81,6 +150,17 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
   };
 
   if (!open) return null;
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+        <div className="bg-white rounded-lg p-6">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="text-center mt-4 font-bold">Loading grid...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundImage: "url(/field.jpg)", backgroundSize: "cover", backgroundPosition: "center", fontFamily: 'Helvetica, Arial, sans-serif' }}>
@@ -172,17 +252,37 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
         {isAdmin && (
           <div className="mt-4 flex flex-col items-center gap-2">
             <button
-              className="bg-green-600 text-white px-3 py-1 rounded font-bold"
-              onClick={randomizeGridNumbers}
+              disabled={isSaving}
+              className={`px-6 py-3 rounded-lg font-black text-lg transition-all shadow-lg ${
+                isSaving 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+              onClick={saveGridToDatabase}
             >
-              Randomize Numbers
+              {isSaving ? 'SAVING...' : '💾 SAVE GRID'}
             </button>
-            <button
-              className="bg-green-600 text-white px-3 py-1 rounded font-bold"
-              onClick={() => setShowAddMultiple(true)}
-            >
-              Add Multiple
-            </button>
+            
+            {saveSuccess && (
+              <div className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold animate-pulse">
+                ✓ Grid saved! Everyone can now see the updates.
+              </div>
+            )}
+            
+            <div className="flex gap-2">
+              <button
+                className="bg-green-600 text-white px-3 py-1 rounded font-bold hover:bg-green-700"
+                onClick={randomizeGridNumbers}
+              >
+                Randomize Numbers
+              </button>
+              <button
+                className="bg-green-600 text-white px-3 py-1 rounded font-bold hover:bg-green-700"
+                onClick={() => setShowAddMultiple(true)}
+              >
+                Add Multiple
+              </button>
+            </div>
           </div>
         )}
 
