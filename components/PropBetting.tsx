@@ -15,6 +15,7 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
   const [tiebreakerScore, setTiebreakerScore] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [betsClosed, setBetsClosed] = useState(false);
+  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
   // Set the kickoff time (local time, e.g., 5:30pm)
   const KICKOFF_HOUR = 17; // 5pm
   const KICKOFF_MINUTE = 30; // 5:30pm
@@ -322,9 +323,31 @@ export default function PropBetting({ isAdmin = false }: { isAdmin?: boolean }) 
         ))}
       </div>
 
-      {/* Auto-save indicator */}
-      <div className="mt-2 text-center">
-        <p className="text-slate-600 text-xs">
+      {/* Save Button and Confirmation */}
+      <div className="mt-4 flex flex-col items-center">
+        <button
+          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-lg transition-all border-2 border-yellow-400"
+          onClick={() => {
+            const dataToSave = {
+              picks: userPicks,
+              userName,
+              tiebreakerScore,
+              lastUpdated: new Date().toISOString(),
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            Object.entries(userPicks).forEach(async ([propId, answer]) => {
+              await supabase.from('prop_bet_answers').upsert({ user_name: userName, prop_id: propId, answer });
+            });
+            setShowSaveConfirmation(true);
+            setTimeout(() => setShowSaveConfirmation(false), 2000);
+          }}
+        >
+          SAVE PICKS
+        </button>
+        {showSaveConfirmation && (
+          <div className="mt-2 text-green-700 font-bold text-sm">Picks saved!</div>
+        )}
+        <p className="mt-2 text-slate-600 text-xs">
           ✓ All picks automatically saved to your device and leaderboard
         </p>
       </div>
