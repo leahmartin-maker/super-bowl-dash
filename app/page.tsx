@@ -6,8 +6,9 @@ import PropBetting from '@/components/PropBetting';
 import PropBetAdmin from '@/components/PropBetAdmin';
 import GridButton from '@/components/GridButton';
 
-export default function Page() {
+export default function Home() {
   const [showBetting, setShowBetting] = useState(false);
+  const [showGamePlan, setShowGamePlan] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -40,20 +41,84 @@ export default function Page() {
         {/* Live Score Component */}
         <LiveScore />
 
-        {/* Super Bowl Grid Button */}
-        <div className="flex justify-center mt-6">
-          <GridButton isAdmin={isAdmin} />
-        </div>
 
-        {/* Betting Button */}
-        <div className="flex justify-center mt-12">
+        {/* Super Bowl Grid Button */}
+        <div className="flex flex-col items-center gap-6 mt-6">
+          {/* The Game Plan Button */}
           <button
-            className="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-xl transition-all border-2 border-yellow-400"
+            className="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-xl transition-all border-2 border-yellow-400 text-center"
+            style={{ minWidth: 220 }}
+            onClick={() => setShowGamePlan(true)}
+          >
+            THE GAME PLAN
+          </button>
+          {/* Qtr Board (GridButton) */}
+          <GridButton isAdmin={isAdmin} />
+          {/* Prop Bet Button */}
+          <button
+            className="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-xl transition-all border-2 border-yellow-400 text-center"
+            style={{ minWidth: 220 }}
             onClick={() => setShowBetting(true)}
           >
-            BETTING
+            PROP BETS
           </button>
+          {/* Photo Booth Button */}
+          <a
+            href="https://jdl09.zappar-us.io/1198237891314520891/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black rounded-full shadow-lg text-xl transition-all border-2 border-yellow-400 text-center"
+            style={{ minWidth: 220 }}
+          >
+            PHOTO BOOTH
+          </a>
         </div>
+        {/* Game Plan Modal */}
+        {showGamePlan && (
+          <div
+            className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center"
+            style={{ backgroundImage: 'url(/field.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+          >
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative text-black">
+              <button
+                className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold"
+                onClick={() => setShowGamePlan(false)}
+                aria-label="Close"
+              >
+                &#10005;
+              </button>
+              <h2 className="text-2xl font-black mb-4 text-center text-black">The Game Plan</h2>
+              <div className="space-y-6 text-base">
+                <div>
+                  <span className="font-bold">The Main Event (5:30pm)</span>
+                  <p>Watch the Super Bowl live! We'll be showing the game outside on the big projector for the ultimate viewing experience. </p>
+                </div>
+                <div>
+                  <span className="font-bold">Glow Party</span>
+                  <p>Get your glow on! We'll have glow sticks and fun glowing accessories to light up the night. Perfect for all ages—let's make the party shine!</p>
+                </div>
+                <div>
+                  <span className="font-bold">Face Painting</span>
+                  <p>Show your team spirit or just get creative! Leah will be offering a face painting station, open for everyone to get festive and colorful!</p>
+                </div>
+                <div>
+                  <span className="font-bold">Nacho Bar</span>
+                  <p>Build your own nachos with all the fixings! Pile them high and enjoy a delicious snack throughout the game.</p>
+                </div>
+                <div>
+                  <span className="font-bold">Prop Betting & Squares</span>
+                  <p>Test your luck and football knowledge with our prop bets and 10x10 squares—place your bets right here on the site and see if you win big!</p>
+                </div>
+                <div>
+                  <span className="font-bold">Drinking Games</span>
+                  <p>Grab a beverage of choice and play along with our Super Bowl 2026 Drinking Game on the home page. </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ...existing code... */}
 
         {/* Betting Modal */}
         {showBetting && (
