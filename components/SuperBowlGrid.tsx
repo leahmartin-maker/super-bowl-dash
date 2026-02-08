@@ -122,12 +122,12 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
           <span className="block text-center font-black text-lg text-blue-600 mb-1">{NFC}</span>
         </div>
         <div className="w-full max-w-full overflow-hidden">
-          <div className="flex flex-col w-full max-w-full" style={{ width: '100%' }}>
+          <div className="flex flex-col w-full max-w-full" style={{ width: '100%', maxWidth: '95vw', overflow: 'hidden' }}>
             {/* Seahawks numbers row */}
             <div className="flex w-full">
-              <div style={{ width: '9%', aspectRatio: '1/1' }}></div>
+              <div style={{ width: '10%' }}></div>
               {nfcNumbers.map((num, idx) => (
-                <div key={"nfc-"+idx} style={{ width: '9%', aspectRatio: '1/1' }} className="flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs">
+                <div key={"nfc-"+idx} style={{ width: '9%' }} className="flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs aspect-square">
                   {num}
                 </div>
               ))}
@@ -136,11 +136,11 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
             {participants.map((row, rowIdx) => (
               <div key={rowIdx} className="flex w-full">
                 {/* Patriots number */}
-                <div style={{ width: '9%', aspectRatio: '1/1' }} className="flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs">
+                <div style={{ width: '9%' }} className="flex items-center justify-center font-bold text-slate-700 border border-slate-300 bg-slate-100 text-xs aspect-square">
                   {afcNumbers[rowIdx]}
                 </div>
                 {row.map((name, colIdx) => (
-                  <div key={colIdx} style={{ width: '9%', aspectRatio: '1/1' }} className={`border border-slate-300 flex items-center justify-center ${isAdmin ? 'cursor-pointer hover:bg-yellow-100' : ''} bg-white text-[10px]`}
+                  <div key={colIdx} style={{ width: '9%' }} className={`border border-slate-300 flex items-center justify-center ${isAdmin ? 'cursor-pointer hover:bg-yellow-100' : ''} bg-white text-[10px] aspect-square`}
                     onClick={isAdmin ? () => openCellModal(rowIdx, colIdx) : undefined}
                   >
                     {name || <span className="text-slate-300">+</span>}
@@ -154,7 +154,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
         {isAdmin && (
           <div className="mt-4 flex flex-col items-center gap-2">
             <button
-              className="bg-blue-600 text-white px-3 py-1 rounded font-bold"
+              className="bg-green-600 text-white px-3 py-1 rounded font-bold"
               onClick={randomizeGridNumbers}
             >
               Randomize Numbers
@@ -172,7 +172,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
         {isAdmin && showAddMultiple && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
             <div className="bg-white rounded-lg p-6 w-80 relative">
-              <button className="absolute top-2 right-2 text-xl text-slate-700 hover:text-red-600 font-bold" onClick={() => setShowAddMultiple(false)}>&times;</button>
+              <button className="absolute top-2 right-2 text-xl text-black hover:text-red-600 font-bold" onClick={() => setShowAddMultiple(false)}>&times;</button>
               <h2 className="font-black text-lg mb-2">Add Multiple Squares</h2>
               <input
                 className="w-full border border-slate-300 rounded p-2 mb-2"
@@ -189,7 +189,7 @@ export default function SuperBowlGrid({ open, onClose, isAdmin = false }: { open
                 onChange={e => setMultiQty(Number(e.target.value))}
                 placeholder="Quantity"
               />
-              <button className="w-full bg-blue-600 text-white py-2 rounded font-bold" onClick={handleAddMultiple}>
+              <button className="w-full bg-green-600 text-white py-2 rounded font-bold" onClick={handleAddMultiple}>
                 Add
               </button>
             </div>
